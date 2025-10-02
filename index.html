@@ -1,25 +1,80 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <title>Zalando Aktienkurs</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #firework { display: none; margin-top: 20px; }
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 30px; }
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; }
     </style>
 </head>
 <body>
     <h1>Zalando Aktienkurs</h1>
-    <p>Aktueller Kurs: <span id="kurs">27.18</span> €</p>
-    <img src="kursverlauf.png" alt="Kursverlauf" width="600">
-    <div id="firework">
-        <h2>🎆 Kursziel erreicht! 🎆</h2>
-    </div>
+    <p>Aktueller Kurs: <span id="kurs">36.00</span> €</p>
+    kursverlauf.png
+    <canvas id="canvas"></canvas>
+
     <script>
         const kurs = parseFloat(document.getElementById('kurs').textContent);
         if (kurs >= 36) {
-            document.getElementById('firework').style.display = 'block';
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.style.display = 'block';
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            function Firework(x, y) {
+                this.x = x;
+                this.y = y;
+                this.particles = [];
+                for (let i = 0; i < 100; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        angle: Math.random() * 2 * Math.PI,
+                        speed: Math.random() * 5 + 2,
+                        radius: Math.random() * 3 + 1,
+                        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                        alpha: 1
+                    });
+                }
+            }
+
+            Firework.prototype.update = function() {
+                this.particles.forEach(p => {
+                    p.x += Math.cos(p.angle) * p.speed;
+                    p.y += Math.sin(p.angle) * p.speed;
+                    p.alpha -= 0.02;
+                });
+            };
+
+            Firework.prototype.draw = function() {
+                this.particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fill();
+                });
+                ctx.globalAlpha = 1;
+            };
+
+            let fireworks = [];
+            setInterval(() => {
+                fireworks.push(new Firework(Math.random() * canvas.width, Math.random() * canvas.height));
+            }, 800);
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                fireworks.forEach(f => {
+                    f.update();
+                    f.draw();
+                });
+                fireworks = fireworks.filter(f => f.particles[0].alpha > 0);
+                requestAnimationFrame(animate);
+            }
+
+            animate();
         }
     </script>
 </body>
