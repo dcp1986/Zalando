@@ -100,7 +100,7 @@
                 const kurs = data.quoteResponse.result[0].regularMarketPrice;
                 kursElement.textContent = kurs.toFixed(2);
 
-                if (kurs >= 26) {
+                if (kurs > 36) {
                     startFireworks();
                 }
             } catch (error) {
