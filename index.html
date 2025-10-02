@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Zalando Aktienkurs</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #firework { display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Zalando Aktienkurs</h1>
+    <p>Aktueller Kurs: <span id="kurs">27.18</span> €</p>
+    <img src="kursverlauf.png" alt="Kursverlauf" width="600">
+    <div id="firework">
+        <h2>🎆 Kursziel erreicht! 🎆</h2>
+    </div>
+    <script>
+        const kurs = parseFloat(document.getElementById('kurs').textContent);
+        if (kurs >= 136) {
+            document.getElementById('firework').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
