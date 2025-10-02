@@ -71,6 +71,17 @@
         };
 
         let fireworks = [];
+        let fireworksStarted = false;
+
+        function startFireworks() {
+            if (fireworksStarted) return;
+            fireworksStarted = true;
+            canvas.style.display = 'block';
+            setInterval(() => {
+                fireworks.push(new Firework(Math.random() * canvas.width, Math.random() * canvas.height));
+            }, 800);
+            animate();
+        }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -82,29 +93,19 @@
             requestAnimationFrame(animate);
         }
 
-        function startFireworks() {
-            canvas.style.display = 'block';
-            setInterval(() => {
-                fireworks.push(new Firework(Math.random() * canvas.width, Math.random() * canvas.height));
-            }, 800);
-            animate();
-        }
-
         async function fetchKurs() {
             try {
-                // Beispiel: Kurs aus einer API holen (hier Platzhalter)
-                const response = await fetch('https://api.example.com/zalando-kurs');
+                const response = await fetch("https://query1.finance.yahoo.com/v7/finance/quote?symbols=ZAL.DE");
                 const data = await response.json();
-                const kurs = parseFloat(data.price); // z. B. 27.18
-
+                const kurs = data.quoteResponse.result[0].regularMarketPrice;
                 kursElement.textContent = kurs.toFixed(2);
 
-                if (kurs >= 26 && canvas.style.display === 'none') {
+                if (kurs >= 26) {
                     startFireworks();
                 }
             } catch (error) {
-                kursElement.textContent = 'Fehler';
-                console.error('Kurs konnte nicht geladen werden:', error);
+                kursElement.textContent = "Fehler";
+                console.error("Kurs konnte nicht geladen werden:", error);
             }
         }
 
